@@ -6,7 +6,7 @@
 * Demonstrate refactoring a program to improve quality while using tests to verify correctness
 
 ## Introduction
-Refactoring is the process of improving the design and structure of existing code without altering it's behavior. Refactoring is not something that happens with a single, large one-off effort. Refactoring is a regular part of day-to-day development. We refactor in small steps, little and often, using our tests after each small change to help us verify our code remains working. Persistent refactoring helps to keep our code **easy to understand** and **easy to change**.
+Refactoring is the process of improving the design and structure of existing code without altering its behavior. Refactoring is not something that happens with a single, large one-off effort. Refactoring is a regular part of day-to-day development. We refactor in small steps, little and often, using our tests after each small change to help us verify our code remains working. Persistent refactoring helps to keep our code **easy to read** and **easy to change**.
 
 But how do we know _when_ we should refactor?
 
