@@ -1,9 +1,12 @@
+const { getMins, getHours, convertTime } = require("./film");
+
 locateTime = (time) => {
-  new Date();
-  d3.setMilliseconds(0);
-  d3.setSeconds(0);
-  d3.setMinutes(time.mins);
-  d3.setHours(time.hours);
+  const thisTime = new Date();
+  thisTime.setMilliseconds(0);
+  thisTime.setSeconds(0);
+  thisTime.setMinutes(getMins(time));
+  thisTime.setHours(getHours(time));
+  return thisTime;
 };
 
 class Showing {
@@ -14,6 +17,18 @@ class Showing {
     this.#film = film;
     this.#startTime = startTime;
     this.#endTime = endTime;
+  }
+
+  getFilm() {
+    return this.#film;
+  }
+
+  getStartTime() {
+    return this.#startTime;
+  }
+
+  getEndTime() {
+    return this.#endTime;
   }
 }
 
@@ -48,13 +63,15 @@ class Screen {
     this.#showings.push(showing);
   }
 
-  timeIsAvailable(intendedStartTime, intendedEndTime) {
-    intendedStartTime = locateTime(intendedStartTime);
-    intendedEndTime = locateTime(intendedEndTime);
+  timeIsAvailable(intendedStart, intendedEnd) {
+    const intendedStartTime = locateTime(convertTime(intendedStart));
+    const intendedEndTime = locateTime(convertTime(intendedEnd));
 
     for (let i = 0; i < this.#showings.length; i++) {
-      const startTime = locateTime(this.#showings[i].startTime);
-      const endTime = locateTime(this.#showings[i].endTime);
+      const startTime = locateTime(
+        convertTime(this.#showings[i].getStartTime())
+      );
+      const endTime = locateTime(convertTime(this.#showings[i].getEndTime()));
 
       if (
         (startTime < intendedStartTime && intendedStartTime < endTime) ||

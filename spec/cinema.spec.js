@@ -122,7 +122,7 @@ describe("Cinema", () => {
     expect(result).toBe(expected);
   });
 
-  fit("schedules single film", () => {
+  it("schedules single film", () => {
     cinema.addFilm("Film1", "12", "1:20");
     cinema.addScreen("Screen #1", 20);
     const expected = {
@@ -132,10 +132,11 @@ describe("Cinema", () => {
     cinema.addFilmToScreen("Film1", "Screen #1", "10:00");
 
     const result = cinema.getAllShowings();
+    console.log("result", result);
     expect(result).toEqual(expected);
   });
 
-  fit("schedules same film on same screen", () => {
+  it("schedules same film on same screen", () => {
     cinema.addFilm("Film1", "12", "1:20");
     cinema.addScreen("Screen #1", 20);
 
@@ -153,7 +154,7 @@ describe("Cinema", () => {
     expect(result).toEqual(expected);
   });
 
-  fit("schedules same film on multiple screens", () => {
+  it("schedules same film on multiple screens", () => {
     cinema.addFilm("Film1", "12", "1:20");
     cinema.addScreen("Screen #1", 20);
     cinema.addScreen("Screen #2", 20);

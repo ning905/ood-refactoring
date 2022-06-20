@@ -1,40 +1,14 @@
-const { Film } = require("./film");
+const {
+  Film,
+  convertTime,
+  getHours,
+  getMins,
+  timeIsValid,
+  ratingIsValid,
+} = require("./film");
 const { Screen } = require("./screen");
 
-const ratings = ["U", "PG", "12", "15", "18"];
-
-const convertTime = (time) => {
-  const converted = /^(\d?\d):(\d\d)$/.exec(time);
-  return converted;
-};
-
-const getHours = (convertedTime) => {
-  const hours = parseInt(converted[1]);
-  return hours;
-};
-
-const getMins = (convertedTime) => {
-  const mins = parseInt(converted[2]);
-  return mins;
-};
-
-const timeIsValid = (time) => {
-  const converted = convertTime(time);
-  if (converted != null && converted.hours > 0 && converted.mins <= 60) {
-    return true;
-  }
-  return false;
-};
-
-const ratingIsValid = (rating) => {
-  if (ratings.includes(rating)) {
-    return true;
-  }
-  return false;
-};
-
 class Cinema {
-  //TODO: Large class
   #maxCapacity;
   #screens;
   #films;
@@ -111,41 +85,43 @@ class Cinema {
     }
 
     const intendedStartTime = convertTime(startTime);
-    const duration = convertTime(film.duration);
+    const duration = convertTime(film.getDuration());
 
-    const intendedEndTime = {};
-    intendedEndTime.hours = intendedStartTime.hours + duration.hours;
-    intendedEndTime.minutes =
-      intendedStartTime.mins + duration.mins + screen.getCleaningMins();
-
-    if (intendedEndTime.minutes >= 60) {
-      intendedEndTime.hours += Math.floor(intendedEndTime.minutes / 60);
-      intendedEndTime.minutes = intendedEndTime.minutes % 60;
+    const intendedEndTimeHours =
+      getHours(intendedStartTime) + getHours(duration);
+    const intendedEndTimeMinutes =
+      getMins(intendedStartTime) + getMins(duration) + screen.getCleaningMins();
+    if (intendedEndTimeMinutes >= 60) {
+      intendedEndTimeHours += Math.floor(intendedEndTimeMinutes / 60);
+      intendedEndTimeMinutes = intendedEndTimeMinutes % 60;
     }
 
-    if (intendedEndTime.hours >= 24) {
+    if (intendedEndTimeHours >= 24) {
       return "Invalid start time - film ends after midnight";
     }
 
-    if (!screen.timeIsAvailable(intendedStartTime, intendedEndTime)) {
+    const intendedEndTime = intendedEndTimeHours + ":" + intendedEndTimeMinutes;
+    if (!screen.timeIsAvailable(startTime, intendedEndTime)) {
       return "Time unavailable";
     }
 
-    screen.addShowing(film, intendedStartTime, intendedEndTime);
+    screen.addShowing(film, startTime, intendedEndTime);
   }
 
   getAllShowings() {
     let allShowings = {};
-    for (let i = 0; i < this.screens.length; i++) {
-      const screen = this.screens[i];
-      for (let j = 0; j < screen.showings.length; j++) {
-        const showing = screen.showings[j];
-        const filmName = showing.film.name;
+    for (let i = 0; i < this.#screens.length; i++) {
+      const currentScreen = this.#screens[i];
+      for (let j = 0; j < currentScreen.getShowings().length; j++) {
+        const currentShowing = currentScreen.getShowings()[j];
+        const filmName = currentShowing.getFilm().getName();
         if (!allShowings[filmName]) {
           allShowings[filmName] = [];
         }
         allShowings[filmName].push(
-          `${screen.name} ${filmName} (${showing.film.rating}) ${showing.startTime} - ${showing.endTime}`
+          `${currentScreen.getName()} ${filmName} (${currentShowing
+            .getFilm()
+            .getRating()}) ${currentShowing.getStartTime()} - ${currentShowing.getEndTime()}`
         );
       }
     }
@@ -155,12 +131,3 @@ class Cinema {
 }
 
 module.exports = Cinema;
-
-const cinema = new Cinema();
-cinema.addScreen("Screen 1", 20);
-console.log(cinema.addScreen("Screen 2", 25));
-console.log(cinema.addScreen("Screen 1", 25));
-console.log(cinema.getScreens());
-
-const screen = new Screen("Screen 1", 25);
-console.log(screen);
