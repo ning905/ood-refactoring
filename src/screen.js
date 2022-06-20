@@ -20,15 +20,11 @@ class Showing {
 class Screen {
   #name;
   #capacity;
-  #maxCapacity;
   #showings;
-  #cleaningMins;
   constructor(name, capacity) {
     this.#name = name;
     this.#capacity = capacity;
-    this.#maxCapacity = 100;
     this.#showings = [];
-    this.#cleaningMins = 20;
   }
 
   getName() {
@@ -44,7 +40,7 @@ class Screen {
   }
 
   getCleaningMins() {
-    return this.#cleaningMins;
+    return 20;
   }
 
   addShowing(film, startTime, endTime) {
@@ -72,39 +68,8 @@ class Screen {
   }
 }
 
-class ScreenList {
-  #screens;
-  constructor() {
-    this.#screens = [];
-  }
-
-  getScreens() {
-    return this.#screens;
-  }
-
-  getScreenByName(name) {
-    const found = this.#screens.find((screen) => screen.name === name);
-    if (found) {
-      return found;
-    }
-    return false;
-  }
-
-  addScreen(name, capacity) {
-    if (capacity <= this.#maxCapacity) {
-      if (this.getScreenByName(name)) {
-        return "Screen already exists";
-      }
-      this.#screens.push(new Screen(name, capacity));
-      return true;
-    }
-    return "Exceeded max capacity";
-  }
-}
-
 module.exports = {
   locateTime: locateTime,
   Showing: Showing,
   Screen: Screen,
-  ScreenList: ScreenList,
 };
